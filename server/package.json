@@ -1,0 +1,19 @@
+{
+  "name": "share-the-code-server",
+  "version": "1.0.0",
+  "description": "A Node.js application with a primary role of keeping domain logic and handling CRUD database operations.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "mongodb",
+    "express"
+  ],
+  "author": "Miroslav Stoyanov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
