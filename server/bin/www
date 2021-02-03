@@ -5,7 +5,7 @@
  */
 
 require("dotenv").config();
-const app = require("../server/app");
+const app = require("../app");
 const debug = require("debug")("share-the-code-db:server");
 const http = require("http");
 

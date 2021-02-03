@@ -1,10 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const MONGODB_URL = process.env.MONGODB_URL;
 
+mongoose.Promise = global.Promise;
 mongoose
     .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
@@ -18,19 +20,10 @@ mongoose
         process.exit(1);
     });
 
-const db = mongoose.connection;
-
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
 
-const port = process.env.NODE_ENV === "production" ? (process.env.PORT || 80) : 3000;
-app.listen(port, () => {
-	console.log("Server listening on port " + port);
-});
-
-app.all("*", function(req, res) {
-	throw new Error("Page not found.");
-});
+module.exports = app;
