@@ -28,4 +28,6 @@ app.use(cookieParser());
 app.use(cors());
 app.use(jwt());
 
+app.use("/users", require("./users/userController"));
+
 module.exports = app;
