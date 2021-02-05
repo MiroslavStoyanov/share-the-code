@@ -1,7 +1,11 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Ajv = require("ajv").default;
+const userValidationSchema = require("./userValidationSchema.json");
+const betterAjvErrors = require("better-ajv-errors");
 const User = require("./userModel");
+const ajv = new Ajv({ jsonPointers: true });
 
 module.exports = {
     authenticate,
@@ -32,6 +36,13 @@ async function getById(id) {
 }
 
 async function create(userParam) {
+    const validate = ajv.compile(userValidationSchema);
+    const isValid = validate(userParam);
+    if (!isValid) {
+        const output = betterAjvErrors(userValidationSchema, userParam, validate.errors);
+        throw output;
+    }
+
     if (await User.findOne({ username: userParam.username })) {
         throw new Error('Username "' + userParam.username + '" is already taken.');
     }
@@ -42,6 +53,13 @@ async function create(userParam) {
 }
 
 async function update(id, userParam) {
+    const validate = ajv.compile(userValidationSchema);
+    const isValid = validate(userParam);
+    if (!isValid) {
+        const output = betterAjvErrors(userValidationSchema, userParam, validate.errors);
+        throw output;
+    }
+
     const user = await User.findById(id);
 
     if (!user) {

@@ -17,7 +17,9 @@
   "author": "Miroslav Stoyanov",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^7.0.4",
     "bcryptjs": "^2.4.3",
+    "better-ajv-errors": "^0.7.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",

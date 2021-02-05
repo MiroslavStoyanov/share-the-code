@@ -21,7 +21,7 @@ async function create(tags) {
     tags.forEach(tag => {
         const dbTag = new Tag(tag);
         dbTag.save();
-        tagIds.add(dbTag.id);
+        tagIds.push(dbTag.id);
     });
 
     return tagIds;
