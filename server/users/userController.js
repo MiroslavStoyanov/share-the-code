@@ -13,11 +13,11 @@ router.delete("/:id", deleteUser);
 module.exports = router;
 
 async function authenticate(req, res, next) {
-    try {
+    try {        
         const response = await userService.authenticate(req.body);
 
-        if (response.user) {
-            return res.json(response.user);
+        if (response) {
+            return res.json(response);
         } else {
             return res.status(400).json({ message: "Username or password is incorrect" });
         }
