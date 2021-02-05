@@ -30,5 +30,6 @@ app.use(jwt());
 
 app.use("/users", require("./users/userController"));
 app.use("/snippets", require("./snippets/snippetController"));
+app.use("/tags", require("./snippets/tagController"));
 
 module.exports = app;

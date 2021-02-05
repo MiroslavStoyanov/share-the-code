@@ -5,7 +5,8 @@ const SnippetSchema = new Schema({
     name: { type: String, unique: true, required: true },
     snippet: { type: String, required: true },
     userId: { type: String, required: true },
-    tagIds: { type: Array, required: false }
+    likesCount: { type: Number, required: false, default: 0 },
+    tagIds: { type: Array, required: false, default: [] }
 });
 
 SnippetSchema.set("toJSON", {
@@ -17,6 +18,6 @@ SnippetSchema.set("toJSON", {
     }
 });
 
-SnippetSchema.index({ name: 1 })
+SnippetSchema.index({ name: 1, userId: 1 })
 
 module.exports = mongoose.model("Snippet", SnippetSchema);
