@@ -29,5 +29,6 @@ app.use(cors());
 app.use(jwt());
 
 app.use("/users", require("./users/userController"));
+app.use("/snippets", require("./snippets/snippetController"));
 
 module.exports = app;

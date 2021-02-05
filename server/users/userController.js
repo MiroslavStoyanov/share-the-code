@@ -19,7 +19,7 @@ async function authenticate(req, res, next) {
         if (response) {
             return res.json(response);
         } else {
-            return res.status(400).json({ message: "Username or password is incorrect" });
+            return res.status(400).json({ message: "Username or password is incorrect." });
         }
     }
     catch(err) {
