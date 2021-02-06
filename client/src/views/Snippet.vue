@@ -10,7 +10,10 @@
                 <label for="snippet-name">Name:</label>
               </b-col>
               <b-col sm="10"
-                ><b-form-input id="snippet-name" placeholder="Something to remember your code by"></b-form-input
+                ><b-form-input
+                  id="snippet-name"
+                  placeholder="Something to remember your code by"
+                ></b-form-input
               ></b-col>
             </b-row>
             <br />
@@ -40,7 +43,7 @@
 import Vue from "vue";
 
 export default Vue.extend({
-  name: "Snippet",
+  name: "Snippet"
 });
 </script>
 

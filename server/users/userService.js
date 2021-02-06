@@ -47,6 +47,10 @@ async function create(userParam) {
         throw new Error('Username "' + userParam.username + '" is already taken.');
     }
 
+    if (await User.findOne({ email: userParam.email })) {
+        throw new Error('Email "' + userParam.username + '" is already taken.');
+    }
+
     const user = new User(userParam);
 
     await user.save();

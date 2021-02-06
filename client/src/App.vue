@@ -15,7 +15,7 @@ import AppHeader from "./components/AppHeader.vue";
 export default Vue.extend({
   name: "App",
   components: {
-    AppHeader,
-  },
+    AppHeader
+  }
 });
 </script>
