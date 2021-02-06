@@ -131,12 +131,13 @@ export default Vue.extend({
       return re.test(email);
     },
     async register() {
-      try {
-        await userDataService.register(this.user);
-      } catch (err) {
-        console.log(err);
-        this.errors.push(err.response.data.error);
-      }
+      await userDataService.register(this.user);
+      await userDataService
+        .login({
+          username: this.user.username,
+          password: this.user.password
+        })
+        .then(() => this.$router.push({ name: "UserProfile" }));
     }
   }
 });

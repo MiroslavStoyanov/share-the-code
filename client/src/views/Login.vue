@@ -30,7 +30,11 @@
             />
           </div>
 
-          <button type="submit" class="btn btn-dark btn-lg btn-block">
+          <button
+            type="button"
+            @click="signIn()"
+            class="btn btn-dark btn-lg btn-block"
+          >
             Sign In
           </button>
         </form>
@@ -41,6 +45,7 @@
 
 <script>
 import Vue from "vue";
+import userDataService from "../services/UserDataService";
 
 export default Vue.extend({
   name: "Login",
@@ -78,6 +83,14 @@ export default Vue.extend({
       }
 
       e.preventDefault();
+    },
+    async signIn() {
+      await userDataService
+        .login({
+          username: this.user.username,
+          password: this.user.password
+        })
+        .then(() => this.$router.push({ name: "UserProfile" }));
     }
   }
 });
