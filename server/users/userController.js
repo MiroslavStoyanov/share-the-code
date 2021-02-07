@@ -55,7 +55,7 @@ async function getCurrent(req, res, next) {
   }
 }
 
-async function getById(req, res, next) {
+async function getById(req, res, _) {
   try {
     const user = await userService.getById(req.params.id);
     if (user) {
@@ -64,24 +64,24 @@ async function getById(req, res, next) {
       return res.sendStatus(404);
     }
   } catch (err) {
-    next(err);
+    res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
-async function update(req, res, next) {
+async function update(req, res, _) {
   try {
     await userService.update(req.params.id, req.body);
     return res.json({});
   } catch (err) {
-    next(err);
+    res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
-async function deleteUser(req, res, next) {
+async function deleteUser(req, res, _) {
   try {
     await userService.deleteUser(req.params.id);
-    return res.json({});
+    return res.status(200).json({});
   } catch (err) {
-    next(err);
+    res.status(400).json({ error: err.message, stack: err.stack });
   }
 }

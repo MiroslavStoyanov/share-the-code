@@ -2,7 +2,7 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="inner-block">
-        <form @submit="checkForm">
+        <form @submit="checkForm" @submit.prevent="signIn">
           <h3>Sign In</h3>
 
           <div v-if="errors.length">
@@ -30,11 +30,7 @@
             />
           </div>
 
-          <button
-            type="button"
-            @click="signIn()"
-            class="btn btn-dark btn-lg btn-block"
-          >
+          <button type="submit" class="btn btn-dark btn-lg btn-block">
             Sign In
           </button>
         </form>
@@ -45,7 +41,7 @@
 
 <script>
 import Vue from "vue";
-import userDataService from "../services/UserDataService";
+import swal from "sweetalert";
 
 export default Vue.extend({
   name: "Login",
@@ -85,12 +81,19 @@ export default Vue.extend({
       e.preventDefault();
     },
     async signIn() {
-      await userDataService
-        .login({
-          username: this.user.username,
-          password: this.user.password
-        })
-        .then(() => this.$router.push({ name: "UserProfile" }));
+      try {
+        let response = await this.$http.post("/users/authenticate", this.user);
+        let token = response.data.token;
+        localStorage.setItem("jwt", token);
+        if (token) {
+          swal("Success", "Login Successful", "success");
+          this.$router.push("/profile");
+        }
+        this.$emit("on-user-sign-in", true);
+      } catch (err) {
+        swal("Error", "Something Went Wrong", "error");
+        console.log(err.response);
+      }
     }
   }
 });

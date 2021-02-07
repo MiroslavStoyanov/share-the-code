@@ -12,8 +12,9 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
-    "nprogress": "^0.2.0",
+    "sweetalert": "^2.1.2",
     "vue": "^2.6.11",
+    "vue-jwt-decode": "^0.1.0",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {

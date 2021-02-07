@@ -32,7 +32,7 @@ UserSchema.index({ username: 1, email: 1 });
 UserSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign(
-    { _id: user._id, username: user.username, email: user.email },
+    { _id: user._id, username: user.username, email: user.email, firstName: user.firstName, lastName: user.lastName },
     process.env.JWT_SECRET
   );
   user.token = token;

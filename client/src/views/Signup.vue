@@ -2,7 +2,7 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="inner-block">
-        <form @submit="checkForm">
+        <form @submit="checkForm" @submit.prevent="register">
           <h3>Sign Up</h3>
 
           <div v-if="errors.length">
@@ -77,7 +77,7 @@
 
 <script>
 import Vue from "vue";
-import userDataService from "../services/UserDataService";
+import swal from "sweetalert";
 
 export default Vue.extend({
   name: "Signup",
@@ -131,13 +131,24 @@ export default Vue.extend({
       return re.test(email);
     },
     async register() {
-      await userDataService.register(this.user);
-      await userDataService
-        .login({
-          username: this.user.username,
-          password: this.user.password
-        })
-        .then(() => this.$router.push({ name: "UserProfile" }));
+      try {
+        let response = await this.$http.post("/users/register", this.user);
+        let token = response.data.token;
+        if (token) {
+          localStorage.setItem("jwt", token);
+          this.$router.push("/profile");
+          swal("Success", "Registration Was successful", "success");
+        } else {
+          swal("Error", "Something Went Wrong", "error");
+        }
+      } catch (err) {
+        let error = err.response;
+        if (error.status === 409) {
+          swal("Error", error.data.message, "error");
+        } else {
+          swal("Error", error.data.err.message, "error");
+        }
+      }
     }
   }
 });
