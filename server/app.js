@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const jwt = require("./helpers/jwt");
 const mongoose = require("mongoose");
 const MONGODB_URL = process.env.MONGODB_URL;
 
@@ -27,11 +26,10 @@ mongoose
   });
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
-app.use(jwt());
 
 app.use("/users", require("./users/userController"));
 app.use("/snippets", require("./snippets/snippetController"));

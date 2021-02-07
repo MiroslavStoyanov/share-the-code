@@ -1,88 +1,91 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const Ajv = require("ajv").default;
-const userValidationSchema = require("./userValidationSchema.json");
-const betterAjvErrors = require("better-ajv-errors");
-const User = require("./userModel");
-const ajv = new Ajv({ jsonPointers: true });
+const { User, validate } = require("./userModel");
 
 module.exports = {
-    authenticate,
-    getAll,
-    getById,
-    create,
-    update,
-    deleteUser
+  authenticate,
+  getAll,
+  getById,
+  create,
+  update,
+  deleteUser,
 };
 
 async function authenticate({ username, password }) {
-    const user = await User.findOne({ username });
-    if (user && bcrypt.compareSync(password, user.password)) {
-        const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-        return {
-            ...user.toJSON(),
-            token
-        };
-    }
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new Error({ error: "Invalid login details" });
+  }
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
+    throw new Error({ error: "Invalid login details" });
+  }
+  
+  if (!user) {
+    throw new Error({
+      error: "Login failed! Check authentication credentials.",
+    });
+  }
+
+  await user.generateAuthToken();
+
+  return user;
 }
 
 async function getAll() {
-    return await User.find();
+  return await User.find().select("-password");;
 }
 
 async function getById(id) {
-    return await User.findById(id);
+  return await User.findById(id).select("-password");;
 }
 
 async function create(userParam) {
-    const validate = ajv.compile(userValidationSchema);
-    const isValid = validate(userParam);
-    if (!isValid) {
-        const output = betterAjvErrors(userValidationSchema, userParam, validate.errors);
-        throw output;
-    }
+  const { error } = validate(userParam);
 
-    if (await User.findOne({ username: userParam.username })) {
-        throw new Error('Username "' + userParam.username + '" is already taken.');
-    }
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
-    if (await User.findOne({ email: userParam.email })) {
-        throw new Error('Email "' + userParam.username + '" is already taken.');
-    }
+  if (await User.findOne({ username: userParam.username })) {
+    throw new Error('Username "' + userParam.username + '" is already taken.');
+  }
 
-    const user = new User(userParam);
+  if (await User.findOne({ email: userParam.email })) {
+    throw new Error('Email "' + userParam.email + '" is already taken.');
+  }
 
-    await user.save();
+  const user = new User(userParam);
+  const data = await user.save();
+  await user.generateAuthToken();
+
+  return data;
 }
 
 async function update(id, userParam) {
-    const validate = ajv.compile(userValidationSchema);
-    const isValid = validate(userParam);
-    if (!isValid) {
-        const output = betterAjvErrors(userValidationSchema, userParam, validate.errors);
-        throw output;
-    }
+  const user = await User.findById(id);
 
-    const user = await User.findById(id);
+  if (!user) {
+    throw new Error("User not found");
+  }
 
-    if (!user) {
-        throw new Error("User not found");
-    }
+  if (
+    user.username !== userParam.username &&
+    (await User.findOne({ username: userParam.username }))
+  ) {
+    throw new Error('Username "' + userParam.username + '" is already taken.');
+  }
 
-    if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
-        throw new Error('Username "' + userParam.username + '" is already taken.');
-    }
+  if (userParam.password) {
+    userParam.password = bcrypt.hashSync(userParam.password, 10);
+  }
 
-    if (userParam.password) {
-        userParam.password = bcrypt.hashSync(userParam.password, 10);
-    }
+  Object.assign(user, userParam);
 
-    Object.assign(user, userParam);
-
-    await user.save();
+  await user.save();
 }
 
 async function deleteUser(id) {
-    await User.findByIdAndRemove(id);
+  await User.findByIdAndRemove(id);
 }
