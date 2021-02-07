@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require('joi');
 const Schema = mongoose.Schema;
 
 const SnippetSchema = new Schema({
@@ -18,6 +19,19 @@ SnippetSchema.set("toJSON", {
     }
 });
 
+function validateSnippet(snippetModel) {
+    const schema = Joi.object({
+      name: Joi.string().min(3).max(50).required(),
+      snippet: Joi.string().min(5).max(5000).required(),
+      userId: Joi.string().required()
+    });
+  
+    return schema.validate(snippetModel);
+  }
+
 SnippetSchema.index({ name: 1, userId: 1 })
 
-module.exports = mongoose.model("Snippet", SnippetSchema);
+const Snippet = mongoose.model("Snippet", SnippetSchema);
+
+module.exports.Snippet = Snippet;
+module.exports.validate = validateSnippet;

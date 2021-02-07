@@ -1,10 +1,11 @@
 const express = require("express");
+const auth = require("../config/auth");
 const router = express.Router();
 const tagService = require("./tagService");
 
-router.get("/", getAll);
-router.post("/", create);
-router.delete("/:id", deleteTag);
+router.get("/", auth, getAll);
+router.post("/", auth, create);
+router.delete("/:id", auth, deleteTag);
 
 module.exports = router;
 

@@ -7,7 +7,16 @@
     </b-card-header>
     <b-collapse id="personal-snippets-collapse" class="mt-2">
       <b-card-body>
-        <b-container fluid> </b-container>
+        <b-container fluid>
+          <div>
+            <b-table
+              striped
+              hover
+              :fields="fields"
+              :items="itemsProvider"
+            ></b-table>
+          </div>
+        </b-container>
       </b-card-body>
     </b-collapse>
   </div>
@@ -15,8 +24,43 @@
 
 <script>
 import Vue from "vue";
+import VueJwtDecode from "vue-jwt-decode";
+import config from "../../config/development";
 
 export default Vue.extend({
-  name: "PersonalSnippets"
+  name: "PersonalSnippets",
+  data() {
+    return {
+      fields: [
+        {
+          key: "snippetName",
+          label: "Snippet Name"
+        },
+        {
+          key: "actions",
+          label: "Like your own snippet?"
+        }
+      ],
+      snippets: {}
+    };
+  },
+  methods: {
+    async itemsProvider() {
+      const token = localStorage.getItem("jwt");
+      const decoded = VueJwtDecode.decode(token);
+      const requestConfig = {
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      };
+      const response = await this.$http.get(
+        config.SNIPPETS.USER_SNIPPETS + decoded._id,
+        requestConfig
+      );
+      this.snippets = response.data;
+
+      return response.data;
+    }
+  }
 });
 </script>

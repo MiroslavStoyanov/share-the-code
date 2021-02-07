@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import config from "./config/development";
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.css";
@@ -11,9 +12,9 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
 const base = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: config.API_BASE_URL,
   headers: {
-    "Content-type": "application/json"
+    "Content-type": config.CONTENT_TYPE
   }
 });
 

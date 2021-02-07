@@ -13,10 +13,7 @@
       <ul class="nav navbar-nav flex-row float-right">
         <div v-if="!isUserLoggedIn" id="login-register-nav-items">
           <li class="nav-item">
-            <router-link
-              @on-user-sign-in="onUserSignIn"
-              class="btn btn-outline-primary"
-              to="/login"
+            <router-link class="btn btn-outline-primary" to="/login"
               >Sign in</router-link
             >
             <router-link class="btn btn-outline-primary" to="/"
@@ -75,9 +72,6 @@ export default Vue.extend({
       this.$router.push("/");
       this.isUserLoggedIn = false;
       swal("Logged Out", "Successfully logged out of your profile", "success");
-    },
-    onUserSignIn(isUserLogged) {
-      this.isUserLoggedIn = isUserLogged;
     }
   }
 });

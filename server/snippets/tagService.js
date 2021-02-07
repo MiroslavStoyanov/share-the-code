@@ -10,18 +10,22 @@ async function getAll() {
     return await Tag.find();
 }
 
-async function create(tags) {
-    const existingTagNames = await Tag.find(i => tags.contains(i.name));
+async function create(snippetId, tags) {
+    const existingTagNames = await Tag.find({ name: [...tags] });
 
-    if (existingTagNames) {
+    if (existingTagNames.length > 0) {
         throw new Error('Tags with names "' + existingTagNames.join(", ") + '" already exist.');
     }
-    const tagIds = [];
+    
+    let tagIds = [];
 
     tags.forEach(tag => {
-        const dbTag = new Tag(tag);
+        const dbTag = new Tag({
+            name: tag,
+            snippetId: snippetId 
+        });
         dbTag.save();
-        tagIds.push(dbTag.id);
+        tagIds.push(dbTag._id);
     });
 
     return tagIds;

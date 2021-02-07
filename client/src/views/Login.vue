@@ -42,6 +42,7 @@
 <script>
 import Vue from "vue";
 import swal from "sweetalert";
+import config from "../config/development";
 
 export default Vue.extend({
   name: "Login",
@@ -82,14 +83,17 @@ export default Vue.extend({
     },
     async signIn() {
       try {
-        let response = await this.$http.post("/users/authenticate", this.user);
+        let response = await this.$http.post(
+          config.USERS.AUTHENTICATE,
+          this.user
+        );
         let token = response.data.token;
         localStorage.setItem("jwt", token);
         if (token) {
           swal("Success", "Login Successful", "success");
           this.$router.push("/profile");
+          window.location.reload();
         }
-        this.$emit("on-user-sign-in", true);
       } catch (err) {
         swal("Error", "Something Went Wrong", "error");
         console.log(err.response);

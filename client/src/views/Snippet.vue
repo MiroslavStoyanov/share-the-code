@@ -2,8 +2,16 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="snippet-background-block">
-        <form>
+        <form @submit.prevent="save">
           <h3>Create snippet</h3>
+
+          <div v-if="errors.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+              <li :key="error" v-for="error in errors">{{ error }}</li>
+            </ul>
+          </div>
+
           <b-container fluid>
             <b-row>
               <b-col sm="2">
@@ -13,6 +21,7 @@
                 ><b-form-input
                   id="snippet-name"
                   placeholder="Something to remember your code by"
+                  v-model="snippetDetails.name"
                 ></b-form-input
               ></b-col>
             </b-row>
@@ -27,13 +36,20 @@
                   placeholder="Code goes here"
                   rows="20"
                   max-rows="25"
+                  v-model="snippetDetails.snippet"
                 ></b-form-textarea>
               </b-col>
             </b-row>
             <br />
-            <b-button variant="outline-primary float-right">Create</b-button>
+            <b-button
+              @click="checkForm"
+              type="submit"
+              variant="outline-primary float-right"
+              >Create</b-button
+            >
           </b-container>
         </form>
+        <tag-input @on-tag-add="addTag($event)" />
       </div>
     </div>
   </div>
@@ -41,9 +57,79 @@
 
 <script>
 import Vue from "vue";
+import swal from "sweetalert";
+import config from "../config/development";
+import VueJwtDecode from "vue-jwt-decode";
+import TagInput from "../components/snippets/TagInput";
 
 export default Vue.extend({
-  name: "Snippet"
+  name: "Snippet",
+  components: {
+    TagInput
+  },
+  data() {
+    return {
+      errors: [],
+      snippetDetails: {
+        name: "",
+        snippet: "",
+        tags: []
+      }
+    };
+  },
+  methods: {
+    async checkForm(e) {
+      if (this.snippetDetails.name && this.snippetDetails.snippet) {
+        return true;
+      }
+
+      this.errors = [];
+
+      if (!this.snippet.name) {
+        this.errors.push("Snippet name is required.");
+      }
+
+      if (!this.snippetDetails.snippet) {
+        this.errors.push("You need to submit a snippet before saving it.");
+      }
+
+      if (!this.snippetDetails.snippet.length > 5000) {
+        this.errors.push(
+          "You have reached the maximum amount for a snippet - 5000 characters."
+        );
+      }
+
+      e.preventDefault();
+    },
+    addTag(tag) {
+      this.snippetDetails.tags.push(tag);
+    },
+    async save() {
+      try {
+        const token = localStorage.getItem("jwt");
+        const decoded = VueJwtDecode.decode(token);
+        const requestConfig = {
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        };
+        const response = await this.$http.post(
+          config.SNIPPETS.BASE_URL,
+          {
+            ...this.snippetDetails,
+            userId: decoded._id
+          },
+          requestConfig
+        );
+        if (response) {
+          swal("Success", "Update successful", "success");
+        }
+      } catch (err) {
+        swal("Error", "Something Went Wrong", "error");
+        console.log(err);
+      }
+    }
+  }
 });
 </script>
 

@@ -78,6 +78,7 @@
 <script>
 import Vue from "vue";
 import swal from "sweetalert";
+import config from "../config/development";
 
 export default Vue.extend({
   name: "Signup",
@@ -132,7 +133,7 @@ export default Vue.extend({
     },
     async register() {
       try {
-        let response = await this.$http.post("/users/register", this.user);
+        let response = await this.$http.post(config.USERS.REGISTER, this.user);
         let token = response.data.token;
         if (token) {
           localStorage.setItem("jwt", token);
