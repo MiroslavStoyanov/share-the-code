@@ -3,9 +3,9 @@ const sinon = require("sinon");
 const expect = chai.expect;
 const faker = require("faker");
 const mongoose = require("mongoose");
-const User = require("../users/userModel");
-const userService = require("../users/userService");
-const userController = require("../users/userController");
+const User = require("./userModel");
+const userService = require("./userService");
+const userController = require("./userController");
 
 describe("User service tests", () => {
   const stubValue = {

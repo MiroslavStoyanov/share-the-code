@@ -19,12 +19,12 @@ async function create(snippetId, tags) {
     
     let tagIds = [];
 
-    tags.forEach(tag => {
+    tags.forEach(async tag => {
         const dbTag = new Tag({
             name: tag,
             snippetId: snippetId 
         });
-        dbTag.save();
+        await dbTag.save();
         tagIds.push(dbTag._id);
     });
 
