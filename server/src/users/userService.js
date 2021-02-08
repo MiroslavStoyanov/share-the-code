@@ -21,7 +21,7 @@ async function authenticate({ username, password }) {
   if (!isPasswordMatch) {
     throw new Error({ error: "Invalid login details" });
   }
-  
+
   if (!user) {
     throw new Error({
       error: "Login failed! Check authentication credentials.",
