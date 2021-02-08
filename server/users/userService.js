@@ -34,11 +34,11 @@ async function authenticate({ username, password }) {
 }
 
 async function getAll() {
-  return await User.find().select("-password");;
+  return await User.find();
 }
 
 async function getById(id) {
-  return await User.findById(id).select("-password");;
+  return await User.findById(id);
 }
 
 async function create(userParam) {

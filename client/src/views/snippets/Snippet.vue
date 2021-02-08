@@ -122,7 +122,7 @@ export default Vue.extend({
           requestConfig
         );
         if (response) {
-          swal("Success", "Update successful", "success");
+          swal("Success", "Successfully created snippet", "success");
         }
       } catch (err) {
         swal("Error", "Something Went Wrong", "error");

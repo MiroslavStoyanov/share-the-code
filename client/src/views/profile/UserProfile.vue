@@ -19,6 +19,7 @@
 import Vue from "vue";
 import PersonalDetails from "../../components/profile/PersonalDetails";
 import PersonalSnippets from "../../components/profile/PersonalSnippets";
+import config from "../../config/development";
 import VueJwtDecode from "vue-jwt-decode";
 
 export default Vue.extend({
@@ -32,14 +33,23 @@ export default Vue.extend({
       user: {}
     };
   },
-  created() {
-    this.getUserDetails();
+  async created() {
+    await this.getUserDetails();
   },
   methods: {
-    getUserDetails() {
+    async getUserDetails() {
       const token = localStorage.getItem("jwt");
       const decoded = VueJwtDecode.decode(token);
-      this.user = decoded;
+      const requestConfig = {
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      };
+      const response = await this.$http.get(
+        config.USERS.BASE_URL + decoded._id,
+        requestConfig
+      );
+      this.user = response.data;
     }
   }
 });
