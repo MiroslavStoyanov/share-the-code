@@ -58,9 +58,9 @@
 <script>
 import Vue from "vue";
 import swal from "sweetalert";
-import config from "../config/development";
+import config from "../../config/development";
 import VueJwtDecode from "vue-jwt-decode";
-import TagInput from "../components/snippets/TagInput";
+import TagInput from "../../components/snippets/TagInput";
 
 export default Vue.extend({
   name: "Snippet",

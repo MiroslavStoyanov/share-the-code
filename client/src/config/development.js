@@ -7,6 +7,7 @@ export default {
   },
   SNIPPETS: {
     BASE_URL: "/snippets/",
-    USER_SNIPPETS: "/snippets/user/"
+    USER_SNIPPETS: "/snippets/user/",
+    GET_SNIPPETS_BY_NAME: "/snippets/name/"
   }
 };

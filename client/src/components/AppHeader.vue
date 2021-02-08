@@ -4,6 +4,11 @@
   >
     <div class="container">
       <ul class="nav navbar-nav flex-row float-left">
+        <li class="nav-item">
+          <router-link class="btn btn-outline-primary" to="/snippet/browse"
+            >Browse all snippets</router-link
+          >
+        </li>
         <li v-if="isUserLoggedIn" class="nav-item">
           <router-link class="btn btn-outline-primary" to="/snippet/create"
             >Create snippet</router-link

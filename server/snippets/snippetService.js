@@ -12,7 +12,14 @@ module.exports = {
 };
 
 async function getAll() {
-    return await Snippet.find();
+    const snippets = await Snippet.find();
+
+    let response = [];
+    Object.values(snippets).forEach(value => {
+        response.push({ snippetName: value.name });
+    });
+
+    return response;
 }
 
 async function getById(id) {
@@ -24,7 +31,14 @@ async function getByName(name) {
 }
 
 async function getUserSnippets(userId) {
-    return await Snippet.find({ userId });
+    const snippets = await Snippet.find({ userId });
+
+    let response = [];
+    Object.values(snippets).forEach(value => {
+        response.push({ snippetName: value.name });
+    });
+
+    return response;
 }
 
 async function create(snippetParams) {

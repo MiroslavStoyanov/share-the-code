@@ -11,9 +11,16 @@
           <div>
             <b-table
               striped
+              bordered
               hover
+              fixed
+              selectable
+              primary-key="id"
+              select-mode="single"
+              thead-tr-class="text-center"
               :fields="fields"
               :items="itemsProvider"
+              @row-selected="toggleItems($event)"
             ></b-table>
           </div>
         </b-container>
@@ -41,7 +48,8 @@ export default Vue.extend({
           label: "Like your own snippet?"
         }
       ],
-      snippets: {}
+      selectedSnippetName: null,
+      snippetDetails: {}
     };
   },
   methods: {
@@ -60,6 +68,23 @@ export default Vue.extend({
       this.snippets = response.data;
 
       return response.data;
+    },
+    async toggleItems(selectedItems) {
+      const selectedSnippetName = selectedItems[0];
+      const stringifiedVersion = JSON.parse(
+        JSON.stringify(selectedSnippetName)
+      );
+      this.selectedSnippetName = stringifiedVersion.snippetName;
+      const response = await this.$http.get(
+        config.SNIPPETS.GET_SNIPPETS_BY_NAME + this.selectedSnippetName
+      );
+      if (response.data) {
+        this.snippetDetails = JSON.parse(JSON.stringify(response.data[0]));
+        this.$router.push({
+          name: "SnippetDetails",
+          params: this.snippetDetails
+        });
+      }
     }
   }
 });

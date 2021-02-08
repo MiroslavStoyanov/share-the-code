@@ -54,11 +54,7 @@ async function getUserSnippets(req, res, _) {
     try {
         const snippets = await snippetService.getUserSnippets(req.params.userId);
         if(snippets) {
-            let response = [];
-            Object.values(snippets).forEach(value => {
-                response.push({ snippetName: value.name });
-            });
-            return res.json(response);
+            return res.json(snippets);
         } else {
             return res.sendStatus(404);
         }
