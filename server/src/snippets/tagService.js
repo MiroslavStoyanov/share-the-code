@@ -1,36 +1,40 @@
 const Tag = require("./tagModel");
 
 module.exports = {
-    getAll,
-    create,
-    deleteTag
+  getAll,
+  create,
+  deleteTag,
 };
 
 async function getAll() {
-    return await Tag.find();
+  return await Tag.find();
 }
 
 async function create(snippetId, tags) {
-    const existingTagNames = await Tag.find({ name: [...tags] });
+  const existingTagNames = await Tag.find({ name: [...tags] });
 
-    if (existingTagNames.length > 0) {
-        throw new Error('Tags with names "' + existingTagNames.join(", ") + '" already exist.');
-    }
-    
-    let tagIds = [];
+  if (existingTagNames.length > 0) {
+    tags = tags.filter((item) =>
+      existingTagNames.every((item2) => item2.name != item)
+    );
+  }
 
-    tags.forEach(async tag => {
-        const dbTag = new Tag({
-            name: tag,
-            snippetId: snippetId 
-        });
-        await dbTag.save();
-        tagIds.push(dbTag._id);
+  let tagIds = [];
+
+  tags.forEach(async (tag) => {
+    const dbTag = new Tag({
+      name: tag,
+      snippetId: snippetId,
     });
+    await dbTag.save();
+    tagIds.push(dbTag._id);
+  });
 
-    return tagIds;
+  existingTagNames.forEach((tag) => tagIds.push(tag._id));
+
+  return tagIds;
 }
 
-async function deleteTag(id){
-    return await Tag.findOneAndRemove(id);
+async function deleteTag(id) {
+  return await Tag.findOneAndRemove(id);
 }

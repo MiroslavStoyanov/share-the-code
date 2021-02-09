@@ -41,6 +41,7 @@ export default Vue.extend({
     },
     removeTag(index) {
       this.tags.splice(index, 1);
+      this.$emit("on-tag-delete", index);
     },
     removeLastTag(event) {
       if (event.target.value.length === 0) {
@@ -53,7 +54,7 @@ export default Vue.extend({
 
 <style scoped>
 .tag-input {
-  width: 80%;
+  width: 60%;
   border: 1px solid #eee;
   font-size: 0.9em;
   height: 50px;

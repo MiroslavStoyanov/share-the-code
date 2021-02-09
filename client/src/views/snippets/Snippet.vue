@@ -2,10 +2,10 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="snippet-background-block">
-        <form @submit.prevent="save">
+        <form @submit="checkForm">
           <h3>Create snippet</h3>
 
-          <div v-if="errors.length">
+          <div class="alert alert-danger" v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul>
               <li :key="error" v-for="error in errors">{{ error }}</li>
@@ -41,15 +41,15 @@
               </b-col>
             </b-row>
             <br />
-            <b-button
-              @click="checkForm"
-              type="submit"
-              variant="outline-primary float-right"
+            <b-button type="submit" class="float-right" variant="primary"
               >Create</b-button
             >
           </b-container>
         </form>
-        <tag-input @on-tag-add="addTag($event)" />
+        <tag-input
+          @on-tag-add="addTag($event)"
+          @on-tag-delete="deleteTag($event)"
+        />
       </div>
     </div>
   </div>
@@ -79,18 +79,21 @@ export default Vue.extend({
   },
   methods: {
     async checkForm(e) {
+      e.preventDefault();
+
       if (this.snippetDetails.name && this.snippetDetails.snippet) {
-        return true;
+        this.errors = [];
+        return await this.save();
       }
 
       this.errors = [];
 
-      if (!this.snippet.name) {
+      if (!this.snippetDetails.name) {
         this.errors.push("Snippet name is required.");
       }
 
       if (!this.snippetDetails.snippet) {
-        this.errors.push("You need to submit a snippet before saving it.");
+        this.errors.push("You need to submit a code snippet before saving it.");
       }
 
       if (!this.snippetDetails.snippet.length > 5000) {
@@ -99,20 +102,35 @@ export default Vue.extend({
         );
       }
 
-      e.preventDefault();
+      if (this.errors.length === 0) {
+        return await this.save();
+      }
     },
     addTag(tag) {
       this.snippetDetails.tags.push(tag);
     },
+    deleteTag(index) {
+      this.snippetDetails.tags.splice(index, 1);
+    },
+    getToken() {
+      return localStorage.getItem("jwt");
+    },
+    getUserDetails(token) {
+      return VueJwtDecode.decode(token);
+    },
+    getRequestConfig(token) {
+      const requestConfig = {
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      };
+      return requestConfig;
+    },
     async save() {
       try {
-        const token = localStorage.getItem("jwt");
-        const decoded = VueJwtDecode.decode(token);
-        const requestConfig = {
-          headers: {
-            Authorization: "Bearer " + token
-          }
-        };
+        const token = this.getToken();
+        const decoded = this.getUserDetails(token);
+        const requestConfig = this.getRequestConfig(token);
         const response = await this.$http.post(
           config.SNIPPETS.BASE_URL,
           {
@@ -121,12 +139,12 @@ export default Vue.extend({
           },
           requestConfig
         );
-        if (response) {
+        if (response.status === 200) {
           swal("Success", "Successfully created snippet", "success");
         }
       } catch (err) {
-        swal("Error", "Something Went Wrong", "error");
         console.log(err);
+        swal("Error", "Something went wrong", "error");
       }
     }
   }
@@ -135,7 +153,7 @@ export default Vue.extend({
 
 <style scoped>
 .snippet-background-block {
-  width: 1500px;
+  width: 80%;
   margin: auto;
   background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);

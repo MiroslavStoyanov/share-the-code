@@ -13,14 +13,14 @@ router.delete("/:id", auth, deleteSnippet);
 
 module.exports = router;
 
-async function getAll(req, res, next) {
+async function getAll(_, res, _) {
     try {
         const response = await snippetService.getAll();
         if (response) {
-            return res.json(response);
+            return await res.json(response);
         }
     } catch (err) {
-        next(err);
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
@@ -28,12 +28,12 @@ async function getById(req, res, _) {
     try {
         const snippet = await snippetService.getById(req.params.id);
         if(snippet) {
-            return res.json(snippet);
+            return await res.json(snippet);
         } else {
-            return res.sendStatus(404);
+            return await res.sendStatus(404);
         }
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
@@ -41,12 +41,12 @@ async function getByName(req, res, _) {
     try {
         const snippet = await snippetService.getByName(req.params.name);
         if(snippet) {
-            return res.json(snippet);
+            return await res.json(snippet);
         } else {
-            return res.sendStatus(404);
+            return await res.sendStatus(404);
         }
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
@@ -54,38 +54,38 @@ async function getUserSnippets(req, res, _) {
     try {
         const snippets = await snippetService.getUserSnippets(req.params.userId);
         if(snippets) {
-            return res.json(snippets);
+            return await res.json(snippets);
         } else {
-            return res.sendStatus(404);
+            return await res.sendStatus(404);
         }
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
 async function create(req, res, _) {
     try {
         await snippetService.create(req.body);
-        return res.json({}); 
+        return await res.json({}); 
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
 async function update(req, res, _) {
     try {
         await snippetService.update(req.params.id, req.body);
-        return res.json({});
+        return await res.json({});
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }
 
 async function deleteSnippet(req, res, _) {
     try {
         await snippetService.deleteSnippet(req.params.id);
-        return res.json({});
+        return await res.json({});
     } catch (err) {
-        res.status(400).json({ error: err.message, stack: err.stack });
+        await res.status(400).json({ error: err.message, stack: err.stack });
     }
 }

@@ -42,6 +42,7 @@ async function getUserSnippets(userId) {
 }
 
 async function create(snippetParams) {
+    //TODO: Use mongoose transaction since the inserts are dependent on each other
     const { erorrs } = validate(snippetParams);
 
     if (erorrs) {
@@ -62,11 +63,11 @@ async function create(snippetParams) {
     const dbSnippet = await snippet.save();
 
     let tagIds = [];
-    if (snippetParams.tags) {
+    if (snippetParams.tags.length !== 0) {
         const tags = await tagService.create(dbSnippet._id, snippetParams.tags)
         tagIds.push(tags);
         snippet.tagIds = tagIds;
-        snippet.save();
+        await snippet.save();
     }
 }
 

@@ -13,45 +13,45 @@ router.delete("/:id", auth, deleteUser);
 
 module.exports = router;
 
-async function authenticate(req, res, next) {
+async function authenticate(req, res, _) {
   try {
     const user = await userService.authenticate(req.body);
     return res.json(user);
   } catch (err) {
-    res.status(400).json({ error: err });
+    await res.status(400).json({ error: err });
   }
 }
 
-async function register(req, res, next) {
+async function register(req, res, _) {
   try {
     const user = await userService.create(req.body);
-    return res.status(200).json(user);
+    return await res.status(200).json(user);
   } catch (err) {
-    res.status(400).json({ error: err.message, stack: err.stack });
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
-async function getAll(req, res, next) {
+async function getAll(_, res, _) {
   try {
     const users = await userService.getAll();
     if (users) {
       return res.json(users);
     }
   } catch (err) {
-    next(err);
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
-async function getCurrent(req, res, next) {
+async function getCurrent(req, res, _) {
   try {
     const user = await userService.getById(req.user.sub);
     if (user) {
-      return res.json(user);
+      return await res.json(user);
     } else {
-      return res.sendStatus(404);
+      return await res.sendStatus(404);
     }
   } catch (err) {
-    next(err);
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
@@ -59,29 +59,29 @@ async function getById(req, res, _) {
   try {
     const user = await userService.getById(req.params.id);
     if (user) {
-      return res.json(user);
+      return await res.json(user);
     } else {
-      return res.sendStatus(404);
+      return await res.sendStatus(404);
     }
   } catch (err) {
-    res.status(400).json({ error: err.message, stack: err.stack });
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
 async function update(req, res, _) {
   try {
     await userService.update(req.params.id, req.body);
-    return res.json({});
+    return await res.json({});
   } catch (err) {
-    res.status(400).json({ error: err.message, stack: err.stack });
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 
 async function deleteUser(req, res, _) {
   try {
     await userService.deleteUser(req.params.id);
-    return res.status(200).json({});
+    return await res.status(200).json({});
   } catch (err) {
-    res.status(400).json({ error: err.message, stack: err.stack });
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
