@@ -87,6 +87,6 @@ async function update(id, snippetParams) {
     await snippet.save();
 }
 
-async function deleteSnippet(id) {
-    await Snippet.findByIdAndRemove(id);
+async function deleteSnippet(name) {
+    await Snippet.findOneAndRemove({ name });
 }

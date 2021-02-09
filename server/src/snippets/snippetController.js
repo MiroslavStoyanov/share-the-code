@@ -9,7 +9,7 @@ router.get("/name/:name", getByName);
 router.get("/user/:userId", auth, getUserSnippets);
 router.post("/", auth, create);
 router.put("/:id", auth, update);
-router.delete("/:id", auth, deleteSnippet);
+router.delete("/:name", auth, deleteSnippet);
 
 module.exports = router;
 
@@ -83,7 +83,7 @@ async function update(req, res, _) {
 
 async function deleteSnippet(req, res, _) {
     try {
-        await snippetService.deleteSnippet(req.params.id);
+        await snippetService.deleteSnippet(req.params.name);
         return await res.json({});
     } catch (err) {
         await res.status(400).json({ error: err.message, stack: err.stack });

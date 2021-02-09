@@ -19,9 +19,23 @@
               select-mode="single"
               thead-tr-class="text-center"
               :fields="fields"
-              :items="itemsProvider"
+              :items="items"
               @row-selected="toggleItems($event)"
-            ></b-table>
+            >
+              <template v-slot:cell(actions)="data">
+                <div class="text-center">
+                  <b-button
+                    class="ml-1"
+                    title="Delete snippet"
+                    icon="trash"
+                    variant="transparent"
+                    @click="deleteItem(data.item, data.index)"
+                  >
+                    <b-icon icon="trash-fill" variant="danger" />
+                  </b-button>
+                </div>
+              </template>
+            </b-table>
           </div>
         </b-container>
       </b-card-body>
@@ -31,11 +45,16 @@
 
 <script>
 import Vue from "vue";
+import swal from "sweetalert";
 import VueJwtDecode from "vue-jwt-decode";
 import config from "../../config/development";
 
 export default Vue.extend({
   name: "PersonalSnippets",
+  props: {
+    userToken: null,
+    requestConfig: {}
+  },
   data() {
     return {
       fields: [
@@ -45,45 +64,62 @@ export default Vue.extend({
         },
         {
           key: "actions",
-          label: "Like your own snippet?"
+          label: "",
+          thStyle: { width: "10%" }
         }
       ],
       selectedSnippetName: null,
-      snippetDetails: {}
+      snippetDetails: {},
+      items: []
     };
+  },
+  async created() {
+    this.items = await this.itemsProvider();
   },
   methods: {
     async itemsProvider() {
-      const token = localStorage.getItem("jwt");
-      const decoded = VueJwtDecode.decode(token);
-      const requestConfig = {
-        headers: {
-          Authorization: "Bearer " + token
-        }
-      };
+      const decoded = VueJwtDecode.decode(this.userToken);
       const response = await this.$http.get(
         config.SNIPPETS.USER_SNIPPETS + decoded._id,
-        requestConfig
+        this.requestConfig
       );
-      this.snippets = response.data;
+      this.items = response.data;
 
-      return response.data;
+      return this.items;
     },
     async toggleItems(selectedItems) {
       const selectedSnippetName = selectedItems[0];
-      const stringifiedVersion = JSON.parse(
+      const selectedSnippetObject = JSON.parse(
         JSON.stringify(selectedSnippetName)
       );
-      this.selectedSnippetName = stringifiedVersion.snippetName;
+      this.selectedSnippetName = selectedSnippetObject.snippetName;
       const response = await this.$http.get(
         config.SNIPPETS.GET_SNIPPETS_BY_NAME + this.selectedSnippetName
       );
       if (response.data) {
         this.snippetDetails = JSON.parse(JSON.stringify(response.data[0]));
+        console.log(this.snippetDetails);
         this.$router.push({
           name: "SnippetDetails",
           params: this.snippetDetails
         });
+      }
+    },
+    async deleteItem(item, index) {
+      const name = item.snippetName;
+      const response = await this.$http.delete(
+        config.SNIPPETS.BASE_URL + name,
+        this.requestConfig
+      );
+      if (response.status === 200) {
+        this.items.splice(index, 1);
+        swal("Success", "Successfully deleted" + item.snippetName, "success");
+      } else {
+        swal(
+          "Error",
+          "Something went while fetching the user details",
+          "error"
+        );
       }
     }
   }

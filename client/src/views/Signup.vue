@@ -136,9 +136,9 @@ export default Vue.extend({
         let token = response.data.token;
         if (token) {
           localStorage.setItem("jwt", token);
-          swal("Success", "Registration was successful", "success");
           this.$router.push("/profile");
           window.location.reload();
+          swal("Success", "Registration was successful", "success");
         } else {
           swal("Error", "Something Went Wrong", "error");
         }

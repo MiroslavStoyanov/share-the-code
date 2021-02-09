@@ -98,9 +98,9 @@ export default Vue.extend({
         let token = response.data.token;
         localStorage.setItem("jwt", token);
         if (token) {
-          swal("Success", "Login Successful", "success");
           this.$router.push("/profile");
           window.location.reload();
+          swal("Success", "Login Successful", "success");
         }
       } catch (err) {
         let error = err.response;
