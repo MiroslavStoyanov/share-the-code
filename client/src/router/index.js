@@ -30,7 +30,8 @@ const routes = [
     name: "SnippetDetails",
     component: SnippetDetails,
     props: route => ({
-      ...route.params
+      ...route.params,
+      isCreateSnippet: false
     })
   },
   {

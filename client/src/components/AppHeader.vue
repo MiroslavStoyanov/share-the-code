@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar shadow bg-white rounded justify-content-between flex-nowrap flex-row fixed-top"
+    class="navbar shadow bg-white rounded justify-content-between flex-nowrap flex-row"
   >
     <div class="container">
       <ul class="nav navbar-nav flex-row float-left">

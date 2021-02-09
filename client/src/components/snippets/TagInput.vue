@@ -54,10 +54,9 @@ export default Vue.extend({
 
 <style scoped>
 .tag-input {
-  width: 60%;
+  width: 100%;
   border: 1px solid #eee;
   font-size: 0.9em;
-  height: 50px;
   box-sizing: border-box;
   padding: 0 10px;
 }

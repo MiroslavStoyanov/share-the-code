@@ -98,7 +98,6 @@ export default Vue.extend({
       );
       if (response.data) {
         this.snippetDetails = JSON.parse(JSON.stringify(response.data[0]));
-        console.log(this.snippetDetails);
         this.$router.push({
           name: "SnippetDetails",
           params: {
@@ -116,7 +115,7 @@ export default Vue.extend({
       );
       if (response.status === 200) {
         this.items.splice(index, 1);
-        swal("Success", "Successfully deleted" + item.snippetName, "success");
+        swal("Success", "Successfully deleted " + item.snippetName, "success");
       } else {
         swal(
           "Error",

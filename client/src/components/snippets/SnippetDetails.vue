@@ -18,7 +18,7 @@
             </b-col>
             <b-col sm="10"
               ><b-form-input
-                :disabled="!isUserLoggedIn"
+                :disabled="!isUserLoggedIn && !isCreateSnippet"
                 id="snippet-name"
                 placeholder="Something to remember your code by"
                 v-model="snippetName"
@@ -32,7 +32,7 @@
             </b-col>
             <b-col sm="10">
               <b-form-textarea
-                :disabled="!isUserLoggedIn"
+                :disabled="!isUserLoggedIn && !isCreateSnippet"
                 id="textarea-auto-height"
                 placeholder="Code goes here"
                 rows="20"
@@ -42,27 +42,58 @@
             </b-col>
           </b-row>
           <br />
-          <div class="row" v-if="isUserLoggedIn">
-            <div class="col-md-10">
+          <b-row>
+            <b-col sm="2">
+              <label for="tag-input">Tags:</label>
+            </b-col>
+            <b-col sm="10">
               <tag-input
+                id="tag-input"
                 @on-tag-add="addTag($event)"
                 @on-tag-delete="deleteTag($event)"
               />
-            </div>
-            <div class="col-md-1">
-              <b-button @click="goBackToPreviousPage()" class="btn float-right"
+            </b-col>
+          </b-row>
+          <br />
+          <b-row v-if="isUserLoggedIn && !isCreateSnippet">
+            <b-col sm="6">
+              <b-button @click="goBackToPreviousPage()" class="btn float-left"
                 >Back</b-button
               >
-            </div>
-            <div class="cold-md-1">
-              <b-button
+            </b-col>
+            <b-col sm="6"
+              ><b-button
                 class="btn float-right"
                 variant="primary"
                 @click="validateData()"
                 >Update</b-button
               >
-            </div>
-          </div>
+            </b-col>
+          </b-row>
+
+          <b-row v-else-if="isCreateSnippet">
+            <b-col sm="6">
+              <b-button @click="goBackToPreviousPage()" class="btn float-left"
+                >Back</b-button
+              >
+            </b-col>
+            <b-col sm="6">
+              <b-button
+                @click="validateData()"
+                class="btn float-right"
+                variant="primary"
+                >Create</b-button
+              >
+            </b-col>
+          </b-row>
+
+          <b-row v-else>
+            <b-col sm="12">
+              <b-button @click="goBackToPreviousPage()" class="btn float-left"
+                >Back</b-button
+              >
+            </b-col>
+          </b-row>
         </b-container>
       </div>
     </div>
@@ -80,6 +111,12 @@ export default Vue.extend({
   name: "SnippetDetails",
   components: {
     TagInput
+  },
+  props: {
+    isCreateSnippet: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -99,7 +136,11 @@ export default Vue.extend({
     async validateData() {
       if (this.code && this.snippetName) {
         this.errors = [];
-        return await this.update();
+        if (this.isUserLoggedIn && !this.isCreateSnippet) {
+          return await this.update();
+        } else if (this.isUserLoggedIn && this.isCreateSnippet) {
+          return await this.create();
+        }
       }
 
       this.errors = [];
@@ -119,7 +160,11 @@ export default Vue.extend({
       }
 
       if (this.errors.length === 0) {
-        return await this.update();
+        if (this.isUserLoggedIn && !this.isCreateSnippet) {
+          return await this.update();
+        } else if (this.isCreateSnippet) {
+          return await this.create();
+        }
       }
     },
     addTag(tag) {
@@ -169,8 +214,37 @@ export default Vue.extend({
         }
       }
     },
+    async create() {
+      try {
+        const token = this.getToken();
+        const decoded = this.getUserDetails(token);
+        const requestConfig = this.getRequestConfig(token);
+        const response = await this.$http.post(
+          config.SNIPPETS.BASE_URL,
+          {
+            ...this.snippetDetails,
+            userId: decoded._id
+          },
+          requestConfig
+        );
+        if (response.status === 200) {
+          swal("Success", "Successfully created snippet", "success");
+        }
+      } catch (err) {
+        let error = err.response;
+        if (error.status === 400) {
+          swal("Error", error.data.error, "error");
+        } else {
+          swal("Error", "Something went wrong", "error");
+        }
+      }
+    },
     goBackToPreviousPage() {
-      this.$router.push("/profile");
+      if (this.isUserLoggedIn && !this.isCreateSnippet) {
+        this.$router.push("/profile");
+      } else {
+        this.$router.push("/snippet/browse");
+      }
     }
   }
 });

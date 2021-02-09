@@ -36,10 +36,6 @@ export default Vue.extend({
         {
           key: "snippetName",
           label: "Snippet Name"
-        },
-        {
-          key: "actions",
-          label: "Like the snippet? No Like button ;("
         }
       ],
       selectedSnippetName: null,
