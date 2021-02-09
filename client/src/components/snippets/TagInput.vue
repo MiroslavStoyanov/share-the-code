@@ -1,11 +1,14 @@
 <template>
   <div class="tag-input">
-    <div v-for="(tag, index) in tags" :key="tag" class="tag-input__tag">
-      <span @click="removeTag(index)">x</span>
-      {{ tag }}
+    <div v-if="!disabled">
+      <div v-for="(tag, index) in tags" :key="tag" class="tag-input__tag">
+        <span @click="removeTag(index)">x</span>
+        {{ tag }}
+      </div>
     </div>
     <input
       type="text"
+      :disabled="disabled"
       placeholder="Enter a Tag"
       class="tag-input__text"
       @keydown.enter="addTag"
@@ -20,6 +23,12 @@ import Vue from "vue";
 import swal from "sweetalert";
 
 export default Vue.extend({
+  props: {
+    disabled: {
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
     return {
       tags: []

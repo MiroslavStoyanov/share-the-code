@@ -49,6 +49,7 @@
             <b-col sm="10">
               <tag-input
                 id="tag-input"
+                :disabled="isTagInputDisabled"
                 @on-tag-add="addTag($event)"
                 @on-tag-delete="deleteTag($event)"
               />
@@ -126,6 +127,14 @@ export default Vue.extend({
       tags: [],
       errors: []
     };
+  },
+  computed: {
+    isTagInputDisabled() {
+      if (this.isCreateSnippet || this.isUserLoggedIn) {
+        return false;
+      }
+      return true;
+    }
   },
   created() {
     this.snippetName = this.$attrs.name;
@@ -222,8 +231,10 @@ export default Vue.extend({
         const response = await this.$http.post(
           config.SNIPPETS.BASE_URL,
           {
-            ...this.snippetDetails,
-            userId: decoded._id
+            name: this.snippetName,
+            snippet: this.code,
+            userId: decoded._id,
+            tags: this.tags
           },
           requestConfig
         );
