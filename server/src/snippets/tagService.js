@@ -22,6 +22,12 @@ async function create(snippetId, tags) {
   let tagIds = [];
 
   for (const tag of tags) {
+    const { erorrs } = validate(tag);
+
+    if (erorrs) {
+      throw new Error(error.details[0].message);
+    }
+
     const dbTag = new Tag({
       name: tag,
       snippetId: snippetId,
@@ -29,7 +35,7 @@ async function create(snippetId, tags) {
     await dbTag.save();
     tagIds.push(dbTag._id);
   }
-  
+
   existingTagNames.forEach((tag) => tagIds.push(tag._id));
 
   return tagIds;
