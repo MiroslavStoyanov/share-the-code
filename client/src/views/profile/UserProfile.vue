@@ -68,7 +68,7 @@ export default Vue.extend({
       } else {
         swal(
           "Error",
-          "Something went while fetching the user details",
+          "Something went wrong while fetching the user details",
           "error"
         );
       }

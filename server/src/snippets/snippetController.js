@@ -8,7 +8,7 @@ router.get("/:id", getById);
 router.get("/name/:name", getByName);
 router.get("/user/:userId", auth, getUserSnippets);
 router.post("/", auth, create);
-router.put("/:id", auth, update);
+router.put("/:name", auth, update);
 router.delete("/:name", auth, deleteSnippet);
 
 module.exports = router;
@@ -74,7 +74,7 @@ async function create(req, res, _) {
 
 async function update(req, res, _) {
     try {
-        await snippetService.update(req.params.id, req.body);
+        await snippetService.update(req.params.name, req.body);
         return await res.json({});
     } catch (err) {
         await res.status(400).json({ error: err.message, stack: err.stack });

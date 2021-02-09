@@ -107,7 +107,7 @@ export default Vue.extend({
         if (error.status === 400) {
           swal("Error", error.data.error, "error");
         } else {
-          swal("Error", "Something Went Wrong", "error");
+          swal("Error", "Something went wrong", "error");
         }
       }
     }

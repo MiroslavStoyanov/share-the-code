@@ -143,8 +143,12 @@ export default Vue.extend({
           swal("Success", "Successfully created snippet", "success");
         }
       } catch (err) {
-        console.log(err);
-        swal("Error", "Something went wrong", "error");
+        let error = err.response;
+        if (error.status === 400) {
+          swal("Error", error.data.error, "error");
+        } else {
+          swal("Error", "Something went wrong", "error");
+        }
       }
     }
   }
@@ -153,7 +157,7 @@ export default Vue.extend({
 
 <style scoped>
 .snippet-background-block {
-  width: 80%;
+  width: 70%;
   margin: auto;
   background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);

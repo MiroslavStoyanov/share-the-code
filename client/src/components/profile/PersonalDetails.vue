@@ -100,7 +100,7 @@ export default Vue.extend({
           swal("Success", "Update successful", "success");
         }
       } catch (err) {
-        swal("Error", "Something Went Wrong", "error");
+        swal("Error", "Something went wrong", "error");
         console.log(err);
       }
     }

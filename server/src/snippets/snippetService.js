@@ -71,11 +71,12 @@ async function create(snippetParams) {
     }
 }
 
-async function update(id, snippetParams) {
-    const snippet = await Snippet.findById(id);
+async function update(name, snippetParams) {
+    //TODO: Same goes here, need to use a transaction
+    const snippet = await Snippet.findOne({ name });
 
     if (!snippet) {
-        throw new Error("Snippet not found");
+        throw new Error("Snippet not found.");
     }
 
     if (snippet.name !== snippetParams.name && await Snippet.findOne({ name: snippetParams.name })) {
@@ -85,6 +86,12 @@ async function update(id, snippetParams) {
     Object.assign(snippet, snippetParams);
 
     await snippet.save();
+
+    if (snippetParams.tags.length !== 0) {
+        const tags = await tagService.create(snippet._id, snippetParams.tags);
+        snippet.tagIds = tags;
+        await snippet.save();
+    }
 }
 
 async function deleteSnippet(name) {

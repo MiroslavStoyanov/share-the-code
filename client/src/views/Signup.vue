@@ -140,7 +140,7 @@ export default Vue.extend({
           window.location.reload();
           swal("Success", "Registration was successful", "success");
         } else {
-          swal("Error", "Something Went Wrong", "error");
+          swal("Error", "Something went wrong", "error");
         }
       } catch (err) {
         console.log(err.response);

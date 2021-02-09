@@ -101,7 +101,10 @@ export default Vue.extend({
         console.log(this.snippetDetails);
         this.$router.push({
           name: "SnippetDetails",
-          params: this.snippetDetails
+          params: {
+            ...this.snippetDetails,
+            isUserLoggedIn: true
+          }
         });
       }
     },
@@ -117,7 +120,7 @@ export default Vue.extend({
       } else {
         swal(
           "Error",
-          "Something went while fetching the user details",
+          "Something went wrong while deleting the current snippet",
           "error"
         );
       }
