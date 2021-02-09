@@ -1,4 +1,4 @@
-### Share The Code
+# Share The Code
 ## About
 This application has the aim to provide users with a platform where they can share their own, browse and like existing code snippets submitted by others.
 
