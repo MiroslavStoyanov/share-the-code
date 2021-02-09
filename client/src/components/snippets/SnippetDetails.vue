@@ -50,6 +50,7 @@
               <tag-input
                 id="tag-input"
                 :disabled="isTagInputDisabled"
+                :tags="tags"
                 @on-tag-add="addTag($event)"
                 @on-tag-delete="deleteTag($event)"
               />
@@ -136,11 +137,11 @@ export default Vue.extend({
       return true;
     }
   },
-  created() {
+  async created() {
     this.snippetName = this.$attrs.name;
     this.code = this.$attrs.snippet;
     this.isUserLoggedIn = this.$attrs.isUserLoggedIn;
-    this.tags = this.fetchSnippetTags();
+    this.tags = await this.fetchSnippetTags();
   },
   methods: {
     async validateData() {
@@ -201,8 +202,13 @@ export default Vue.extend({
       const response = await this.$http.get(
         config.TAGS.BASE_URL + this.snippetName
       );
+
       if (response.status === 200) {
-        return response.data;
+        let tags = [];
+        Object.values(response.data).forEach(tag => {
+          tags.push(tag);
+        });
+        return tags;
       }
       return [];
     },

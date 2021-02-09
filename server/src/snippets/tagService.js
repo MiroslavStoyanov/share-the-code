@@ -1,4 +1,4 @@
-const snippetService = require("./snippetService");
+const { Snippet } = require("./snippetModel");
 const { Tag, validate } = require("./tagModel");
 
 module.exports = {
@@ -13,7 +13,7 @@ async function getAll() {
 }
 
 async function getBySnippetName(snippetName) {
-  const snippet = await snippetService.getByName(snippetName);
+  const snippet = await Snippet.findOne({ name: snippetName });
   const tags = await Tag.find({ snippetId: snippet._id });
 
   let response = [];

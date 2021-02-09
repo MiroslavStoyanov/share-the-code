@@ -1,8 +1,8 @@
 <template>
   <div class="tag-input">
-    <div v-if="!disabled">
+    <div>
       <div v-for="(tag, index) in tags" :key="tag" class="tag-input__tag">
-        <span @click="removeTag(index)">x</span>
+        <span v-if="!disabled" @click="removeTag(index)">x</span>
         {{ tag }}
       </div>
     </div>
@@ -27,12 +27,11 @@ export default Vue.extend({
     disabled: {
       type: Boolean,
       required: true
+    },
+    tags: {
+      type: Array,
+      required: true
     }
-  },
-  data() {
-    return {
-      tags: []
-    };
   },
   methods: {
     addTag(event) {
