@@ -51,8 +51,6 @@
                 id="tag-input"
                 :disabled="isTagInputDisabled"
                 :tags="tags"
-                @on-tag-add="addTag($event)"
-                @on-tag-delete="deleteTag($event)"
               />
             </b-col>
           </b-row>
@@ -177,12 +175,6 @@ export default Vue.extend({
           return await this.create();
         }
       }
-    },
-    addTag(tag) {
-      this.tags.push(tag);
-    },
-    deleteTag(index) {
-      this.tags.splice(index, 1);
     },
     getToken() {
       return localStorage.getItem("jwt");

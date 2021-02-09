@@ -12,7 +12,6 @@
       placeholder="Enter a Tag"
       class="tag-input__text"
       @keydown.enter="addTag"
-      @keydown.188="addTag"
       @keydown.delete="removeLastTag"
     />
   </div>
@@ -45,11 +44,9 @@ export default Vue.extend({
         this.tags.push(val);
         event.target.value = "";
       }
-      this.$emit("on-tag-add", val);
     },
     removeTag(index) {
       this.tags.splice(index, 1);
-      this.$emit("on-tag-delete", index);
     },
     removeLastTag(event) {
       if (event.target.value.length === 0) {

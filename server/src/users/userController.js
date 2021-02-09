@@ -16,9 +16,9 @@ module.exports = router;
 async function authenticate(req, res, _) {
   try {
     const user = await userService.authenticate(req.body);
-    return res.json(user);
+    return await res.json(user);
   } catch (err) {
-    await res.status(400).json({ error: err });
+    await res.status(400).json({ error: err.message, stack: err.stack });
   }
 }
 

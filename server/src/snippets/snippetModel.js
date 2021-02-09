@@ -6,8 +6,8 @@ const SnippetSchema = new Schema({
   name: { type: String, unique: true, required: true },
   snippet: { type: String, required: true },
   userId: { type: String, required: true },
-  likesCount: { type: Number, required: false, default: 0 },
-  tagIds: { type: Array, required: false, default: [] },
+  userLikeIds: [],
+  tagIds: [],
 });
 
 SnippetSchema.set("toJSON", {
