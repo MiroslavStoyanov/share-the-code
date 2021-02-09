@@ -1,13 +1,27 @@
-const Tag = require("./tagModel");
+const snippetService = require("./snippetService");
+const { Tag, validate } = require("./tagModel");
 
 module.exports = {
   getAll,
+  getBySnippetName,
   create,
   deleteTag,
 };
 
 async function getAll() {
   return await Tag.find();
+}
+
+async function getBySnippetName(snippetName) {
+  const snippet = await snippetService.getByName(snippetName);
+  const tags = await Tag.find({ snippetId: snippet._id });
+
+  let response = [];
+  Object.values(tags).forEach((tag) => {
+    response.push(tag.name);
+  });
+
+  return response;
 }
 
 async function create(snippetId, tags) {

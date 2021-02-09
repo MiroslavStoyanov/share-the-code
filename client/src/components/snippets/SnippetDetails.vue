@@ -140,6 +140,7 @@ export default Vue.extend({
     this.snippetName = this.$attrs.name;
     this.code = this.$attrs.snippet;
     this.isUserLoggedIn = this.$attrs.isUserLoggedIn;
+    this.tags = this.fetchSnippetTags();
   },
   methods: {
     async validateData() {
@@ -195,6 +196,15 @@ export default Vue.extend({
         }
       };
       return requestConfig;
+    },
+    async fetchSnippetTags() {
+      const response = await this.$http.get(
+        config.TAGS.BASE_URL + this.snippetName
+      );
+      if (response.status === 200) {
+        return response.data;
+      }
+      return [];
     },
     async update() {
       try {

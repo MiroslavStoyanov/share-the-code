@@ -10,5 +10,8 @@ export default {
     BASE_URL: "/snippets/",
     USER_SNIPPETS: "/snippets/user/",
     GET_SNIPPETS_BY_NAME: "/snippets/name/"
+  },
+  TAGS: {
+    BASE_URL: "/tags/"
   }
 };
