@@ -72,7 +72,7 @@ export default Vue.extend({
 
 <style scoped>
 .snippet-background-block {
-  width: 1000px;
+  width: 60%;
   margin: auto;
   background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
