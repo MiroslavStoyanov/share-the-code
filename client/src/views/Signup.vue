@@ -2,10 +2,10 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="inner-block">
-        <form @submit="checkForm" @submit.prevent="register">
+        <form @submit="checkForm">
           <h3>Sign Up</h3>
 
-          <div v-if="errors.length">
+          <div class="alert alert-danger" v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul>
               <li :key="error" v-for="error in errors">{{ error }}</li>
@@ -57,11 +57,7 @@
             />
           </div>
 
-          <button
-            type="button"
-            @click="register()"
-            class="btn btn-dark btn-lg btn-block"
-          >
+          <button type="submit" class="btn btn-dark btn-lg btn-block">
             Sign Up
           </button>
 
@@ -95,14 +91,17 @@ export default Vue.extend({
     };
   },
   methods: {
-    checkForm: function(e) {
+    async checkForm(e) {
+      e.preventDefault();
+
       if (
         this.user.username &&
         this.user.email &&
         this.user.password &&
         this.user.password.length >= 8
       ) {
-        return true;
+        this.errors = [];
+        return await this.register();
       }
 
       this.errors = [];
@@ -111,10 +110,12 @@ export default Vue.extend({
         this.errors.push("Username is required.");
       }
 
+      if (this.user.username && this.user.username.length < 3) {
+        this.errors.push("A username needs to have at least 3 symbols.");
+      }
+
       if (!this.user.email) {
         this.errors.push("Email is required.");
-      } else if (!this.validEmail(this.email)) {
-        this.errors.push("Valid email required.");
       }
 
       if (!this.user.password) {
@@ -125,11 +126,9 @@ export default Vue.extend({
         this.errors.push("Password's minimum required length is 8 characters.");
       }
 
-      e.preventDefault();
-    },
-    validEmail: function(email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
+      if (this.errors.length === 0) {
+        return await this.register();
+      }
     },
     async register() {
       try {
@@ -137,15 +136,17 @@ export default Vue.extend({
         let token = response.data.token;
         if (token) {
           localStorage.setItem("jwt", token);
+          swal("Success", "Registration was successful", "success");
           this.$router.push("/profile");
-          swal("Success", "Registration Was successful", "success");
+          window.location.reload();
         } else {
           swal("Error", "Something Went Wrong", "error");
         }
       } catch (err) {
+        console.log(err.response);
         let error = err.response;
-        if (error.status === 409) {
-          swal("Error", error.data.message, "error");
+        if (error.status === 400) {
+          swal("Error", error.data.error, "error");
         } else {
           swal("Error", error.data.err.message, "error");
         }

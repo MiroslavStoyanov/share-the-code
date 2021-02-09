@@ -2,10 +2,10 @@
   <div class="vue-tempalte">
     <div class="vertical-center">
       <div class="inner-block">
-        <form @submit="checkForm" @submit.prevent="signIn">
+        <form @submit="checkForm">
           <h3>Sign In</h3>
 
-          <div v-if="errors.length">
+          <div class="alert alert-danger" v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul>
               <li :key="error" v-for="error in errors">{{ error }}</li>
@@ -56,19 +56,25 @@ export default Vue.extend({
     };
   },
   methods: {
-    checkForm: function(e) {
+    async checkForm(e) {
+      e.preventDefault();
       if (
         this.user.username &&
         this.user.password &&
         this.user.password.length >= 8
       ) {
-        return true;
+        this.errors = [];
+        return await this.signIn();
       }
 
       this.errors = [];
 
       if (!this.user.username) {
         this.errors.push("Username is required.");
+      }
+
+      if (this.user.username && this.user.username.length < 3) {
+        this.errors.push("A username needs to have at least 3 symbols.");
       }
 
       if (!this.user.password) {
@@ -79,7 +85,9 @@ export default Vue.extend({
         this.errors.push("Password's minimum required length is 8 characters.");
       }
 
-      e.preventDefault();
+      if (this.errors.length === 0) {
+        return await this.signIn();
+      }
     },
     async signIn() {
       try {
@@ -95,8 +103,12 @@ export default Vue.extend({
           window.location.reload();
         }
       } catch (err) {
-        swal("Error", "Something Went Wrong", "error");
-        console.log(err.response);
+        let error = err.response;
+        if (error.status === 400) {
+          swal("Error", error.data.error, "error");
+        } else {
+          swal("Error", "Something Went Wrong", "error");
+        }
       }
     }
   }

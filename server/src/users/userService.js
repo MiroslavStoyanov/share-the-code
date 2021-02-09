@@ -45,7 +45,7 @@ async function create(userParam) {
   const { error } = validate(userParam);
 
   if (error) {
-    return res.status(400).send(error.details[0].message);
+    return new Error(error.details[0].message);
   }
 
   if (await User.findOne({ username: userParam.username })) {
