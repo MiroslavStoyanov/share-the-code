@@ -61,11 +61,9 @@ async function create(snippetParams) {
 
   const dbSnippet = await snippet.save();
 
-  let tagIds = [];
   if (snippetParams.tags.length !== 0) {
     const tags = await tagService.create(dbSnippet._id, snippetParams.tags);
-    tagIds.push(tags);
-    snippet.tagIds = tagIds;
+    snippet.tagIds = tags;
     await snippet.save();
   }
 }
